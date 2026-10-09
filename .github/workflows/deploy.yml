@@ -1,0 +1,30 @@
+name: Deploy dbt
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Pull dbt on EC2 and reload Dagster
+        uses: appleboy/ssh-action@v1.2.2
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            set -euo pipefail
+            cd /opt/investment_data_products
+            if [ -d dbt/.git ]; then
+              sudo -u dagster git -C dbt fetch origin
+              sudo -u dagster git -C dbt reset --hard origin/main
+            else
+              sudo -u dagster rm -rf dbt
+              sudo -u dagster git clone https://github.com/kunal-dey/investment-dbt.git dbt
+            fi
+            sudo -u dagster bash -lc 'export PATH="$HOME/.local/bin:$PATH"; set -a; [ -f /etc/investment_data_products.env ] && . /etc/investment_data_products.env; set +a; cd /opt/investment_data_products; uv run dbt parse --project-dir dbt --profiles-dir dbt'
+            sudo systemctl restart dagster-webserver dagster-daemon
