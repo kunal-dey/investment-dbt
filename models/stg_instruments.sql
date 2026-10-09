@@ -5,7 +5,5 @@ select
     name,
     exchange,
     segment,
-    instrument_type,
-    expiry,
-    strike
+    instrument_type
 from {{ source('data_platform_catalog', 'instruments') }}
