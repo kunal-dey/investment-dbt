@@ -7,8 +7,5 @@ select
     segment,
     instrument_type,
     expiry,
-    strike,
-    lot_size,
-    tick_size,
-    last_price
+    strike
 from {{ source('data_platform_catalog', 'instruments') }}
