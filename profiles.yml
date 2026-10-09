@@ -7,6 +7,8 @@ investment_data_products:
       extensions:
         - httpfs
         - iceberg
+      settings:
+        unsafe_enable_version_guessing: true
       secrets:
         - type: s3
           region: "{{ env_var('AWS_REGION') }}"
