@@ -16,9 +16,6 @@ clean-targets:
 models:
   investment_data_products:
     +materialized: table
-    # Run after commit. The UDF reads the table from the parent DuckDB
-    # connection, which cannot see an uncommitted table created on the
-    # dbt cursor.
     +post_hook:
-      - sql: "select write_iceberg_relation('{{ this }}') as iceberg_table"
-        transaction: false
+      sql: "{{ write_model_to_iceberg() }}"
+      transaction: false
