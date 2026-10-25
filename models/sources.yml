@@ -8,3 +8,7 @@ sources:
         description: Kite tradable instruments dump from /instruments.
         meta:
           external_location: "iceberg_scan('{{ env_var('S3_LAKE_BASE') }}/{{ env_var('GLUE_DATABASE') }}/instruments')"
+      - name: nse_etfs
+        description: nse master data for etfs.
+        meta:
+          external_location: "iceberg_scan('{{ env_var('S3_LAKE_BASE') }}/{{ env_var('GLUE_DATABASE') }}/nse_etfs')"
